@@ -8,5 +8,6 @@ typedef enum WireCommands {
   LDOn = 6,
   PSIOn = 7,
   LDOff = 8,
-  PSIOff = 9
+  PSIOff = 9,
+  LDBlinkAmount = 10
 };

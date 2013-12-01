@@ -12,14 +12,23 @@
 #include "TextDisplay.h"
 #include "WireCommands.h"
 
+#include "PSI.h"
+
 // SET THESE MANUALLY
 int logicsI2CAdapter = RLD;
 int deviceCount = RLDDeviceCount;
 LedControl ledControl = LedControl(2, 4, 8, deviceCount);
 unsigned char logic[RLDDeviceCount][6];
 bool vLogic[RLDDeviceCount][5][9];
+int ldBlinkAmount = 256;
+int ldBlinkDelay = 175;
+unsigned long ldLastBlink = 0;
 
 int delayTime = 30;
+
+
+PSI psi(&ledControl, 3, 1000, 2000, 200);
+
 
 void setup() {
   setupLogics();
@@ -28,6 +37,27 @@ void setup() {
 }
 
 void loop() {
+//  blinkLogics();
+/*
+
+  int i=0;
+  for (i=0; i <4; i++) {
+    psi.Off();
+    delay(250);
+    psi.On();
+    delay(250);
+  }
+  for (i=0; i < 16; i++) {
+    psi.SetBrightness(i);
+    delay(250);
+  }
+  for (i=15; i >= 0; i--) {
+    psi.SetBrightness(i);
+    delay(250);
+  }
+  */
+  psi.Animate();
+  delay(10);
 }
 
 void setupLogics() {
@@ -44,7 +74,7 @@ void setupLogics() {
       ledControl.setIntensity(2, LDBrightness);
       ledControl.setIntensity(3, PSIBrightness);
 //      displayAurebeshString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
-      FeedGridLeft(B00000); break;
+//      FeedGridLeft(B00000); break;
     case FLD:
       Wire.begin(FLDAddress);
       ledControl.setIntensity(0, LDBrightness);
@@ -93,6 +123,9 @@ void receiveEvent(int eventCode) {
     case PSIOff:
       psiOff();
       break;
+    case LDBlinkAmount:
+      setLDBlinkAmount();
+      break;
   }
 }
 
@@ -139,12 +172,13 @@ void setPSIBrightness() {
 
   if (logicsI2CAdapter == CBI)
     return;
-    
+/*    
   if (logicsI2CAdapter == RLD) {
     ledControl.setIntensity(3, brightness);
   } else {
     ledControl.setIntensity(2, brightness);
   }
+*/
 }
 
 void ldOn() {
@@ -162,11 +196,14 @@ void psiOn() {
   if (logicsI2CAdapter == CBI)
     return;
 
+/*
   if (logicsI2CAdapter == RLD) {
     setPsiOn(3);
   } else {
     setPsiOn(2);
   }  
+*/
+  psi.On();
 }
 
 void ldOff() {
@@ -184,15 +221,33 @@ void psiOff() {
   if (logicsI2CAdapter == CBI)
     return;
 
+/*
   if (logicsI2CAdapter == RLD) {
     setPsiOff(3);
   } else {
     setPsiOff(2);
   }  
+  */
+  psi.Off();
+}
+
+void setLDBlinkAmount() {
+  int blinkAmount = Wire.read();
 }
 
 
 // -------------------------------------------------------------------------------------------
+void blinkLogics() {
+  if (logicsI2CAdapter == CBI)
+    return;
+    
+  if (millis() - ldLastBlink > ldBlinkDelay) {
+    for (int device = 0; device < ledControl.getDeviceCount() -1; device++) 
+      for (int row = 0; row < 6; row++)
+        ledControl.setRow(device, row, random(0, ldBlinkAmount));
+  }
+}
+
 void setLdOn(int deviceMax) {
   for (int device = 0; device < deviceMax; device++) {
     for (int row = 0; row < 6; row ++) {
