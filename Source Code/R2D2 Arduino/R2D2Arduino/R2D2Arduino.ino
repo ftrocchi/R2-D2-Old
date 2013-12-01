@@ -39,17 +39,25 @@ void setup() {
 }
 
 void loop() {
-  Wire.beginTransmission(20);
+  Wire.beginTransmission(10);
+  Wire.write(0);
+  Wire.endTransmission();
+  delay(3000);
+  
+  Wire.beginTransmission(10);
   Wire.write(1);
   Wire.endTransmission();
-  digitalWrite(13, HIGH);
-  delay(500);
+  delay(3000);
   
-  Wire.beginTransmission(20);
+  String string1 = "No I don't think he likes you";
+  Wire.beginTransmission(10);
   Wire.write(2);
+  Wire.write(string1.length());
+  for (int i = 0; i < string1.length(); i++)
+    Wire.write(string1.charAt(i));
   Wire.endTransmission();
-  digitalWrite(13, LOW);
-  delay(500);
+  delay(10000);
+  
   
   
 //  wsServer.listen();

@@ -10,6 +10,7 @@
 #include "DeviceCount.h"
 #include "DeviceBrightness.h"
 #include "TextDisplay.h"
+#include "WireCommands.h"
 
 // SET THESE MANUALLY
 int logicsI2CAdapter = RLD;
@@ -18,7 +19,7 @@ LedControl ledControl = LedControl(2, 4, 8, deviceCount);
 unsigned char logic[RLDDeviceCount][6];
 bool vLogic[RLDDeviceCount][5][9];
 
-int delayTime = 10;
+int delayTime = 30;
 
 void setup() {
   setupLogics();
@@ -42,7 +43,7 @@ void setupLogics() {
       ledControl.setIntensity(1, LDBrightness);
       ledControl.setIntensity(2, LDBrightness);
       ledControl.setIntensity(3, PSIBrightness);
-      displayString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
+      //displayString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
       FeedGridLeft(B00000); break;
     case FLD:
       Wire.begin(FLDAddress);
@@ -59,12 +60,42 @@ void setupLogics() {
 }
 
 void receiveEvent(int eventCode) {
+  int command = Wire.read();
+  
+  switch (command) {
+    case AllOn:
+      allOn();
+      break;
+    case AllOff:
+      allOff();
+      break;
+    case DisplayEnglish:
+      int length = Wire.read();
+      for (int i = 0; i < length; i++) 
+        drawLetter(Wire.read());
+      break;
+  }
 }
 
+void allOn() {
+  for (int device = 0; device < ledControl.getDeviceCount(); device++) {
+    for (int row = 0; row < 6; row ++) {
+      ledControl.setRow(device, row, 255);
+    }
+  }
+}
+
+void allOff() {
+  for (int device = 0; device < ledControl.getDeviceCount(); device++)
+    ledControl.clearDisplay(device);
+}
+
+/*
 void displayString(char text[]) {
   for (unsigned char i = 0; i < strlen(text); i++)
     drawLetter(text[i]);
 }
+*/
 
 void drawLetter(char letter) {
   if (letter >= 'a' && letter  <= 'z')
@@ -188,5 +219,3 @@ void displayLogic() {
     delay(delayTime);
   }
 }
-
-
