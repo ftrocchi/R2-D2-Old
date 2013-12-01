@@ -42,16 +42,33 @@ void loop() {
   Wire.beginTransmission(10);
   Wire.write(0);
   Wire.endTransmission();
-  delay(3000);
+  
+  int brightness =0;
+  for (brightness = 0; brightness < 16; brightness++) {
+    Wire.beginTransmission(10);
+    Wire.write(4);
+    Wire.write(brightness);
+    Wire.endTransmission();
+    delay(250);
+  }
+  
+  for (brightness = 15; brightness >=0; brightness--) {
+    Wire.beginTransmission(10);
+    Wire.write(4);
+    Wire.write(brightness);
+    Wire.endTransmission();
+    delay(250);
+  }
   
   Wire.beginTransmission(10);
-  Wire.write(1);
+  Wire.write(4);
+  Wire.write(7);
   Wire.endTransmission();
-  delay(3000);
+  
   
   String string1 = "No I don't think he likes you";
   Wire.beginTransmission(10);
-  Wire.write(2);
+  Wire.write(3);
   Wire.write(string1.length());
   for (int i = 0; i < string1.length(); i++)
     Wire.write(string1.charAt(i));

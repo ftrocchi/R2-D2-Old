@@ -75,6 +75,9 @@ void receiveEvent(int eventCode) {
     case DisplayAurebesh:
       displayAurebesh();
       break;
+    case SetLDBrightness:
+      setLDBrightness();
+      break;
   }
 }
 
@@ -101,6 +104,22 @@ void displayAurebesh() {
   int length = Wire.read();
   for (int i = 0; i < length; i++) 
     drawAurebeshLetter(Wire.read());
+}
+
+void setLDBrightness() {
+  int brightness = Wire.read();
+  
+  if (logicsI2CAdapter == CBI)
+    return;
+    
+  if (logicsI2CAdapter == RLD) {
+    ledControl.setIntensity(0, brightness);
+    ledControl.setIntensity(1, brightness);
+    ledControl.setIntensity(2, brightness);
+  } else {
+    ledControl.setIntensity(0, brightness);
+    ledControl.setIntensity(1, brightness);
+  }
 }
 
 void displayString(char text[]) {
