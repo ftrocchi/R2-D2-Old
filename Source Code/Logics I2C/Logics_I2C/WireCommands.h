@@ -4,5 +4,9 @@ typedef enum WireCommands {
   DisplayEnglish = 2,
   DisplayAurebesh = 3,
   SetLDBrightness = 4,
-  SetPSIBrightness = 5
+  SetPSIBrightness = 5,
+  LDOn = 6,
+  PSIOn = 7,
+  LDOff = 8,
+  PSIOff = 9
 };

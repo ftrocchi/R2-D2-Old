@@ -39,10 +39,45 @@ void setup() {
 }
 
 void loop() {
+  // all On
   Wire.beginTransmission(10);
   Wire.write(0);
   Wire.endTransmission();
+  delay(1000);
   
+  // all off
+  Wire.beginTransmission(10);
+  Wire.write(1);
+  Wire.endTransmission();
+  delay(1000);
+  
+  // english
+  String string1 = "This is English";
+  Wire.beginTransmission(10);
+  Wire.write(2);
+  Wire.write(string1.length());
+  for (int i = 0; i < string1.length(); i++)
+    Wire.write(string1.charAt(i));
+  Wire.endTransmission();
+  delay(3000);
+  
+  // english
+  String string2 = "This is Aurebesh";
+  Wire.beginTransmission(10);
+  Wire.write(3);
+  Wire.write(string1.length());
+  for (int i = 0; i < string1.length(); i++)
+    Wire.write(string1.charAt(i));
+  Wire.endTransmission();
+  delay(3000);
+  
+  // put all on
+  Wire.beginTransmission(10);
+  Wire.write(0);
+  Wire.endTransmission();
+  delay(1000);
+  
+  // ld brightness
   int brightness =0;
   for (brightness = 0; brightness < 16; brightness++) {
     Wire.beginTransmission(10);
@@ -64,17 +99,52 @@ void loop() {
   Wire.write(4);
   Wire.write(7);
   Wire.endTransmission();
+
+  // psi bright ness  
+  for (brightness = 0; brightness < 16; brightness++) {
+    Wire.beginTransmission(10);
+    Wire.write(5);
+    Wire.write(brightness);
+    Wire.endTransmission();
+    delay(250);
+  }
   
+  for (brightness = 15; brightness >=0; brightness--) {
+    Wire.beginTransmission(10);
+    Wire.write(5);
+    Wire.write(brightness);
+    Wire.endTransmission();
+    delay(250);
+  }
   
-  String string1 = "No I don't think he likes you";
   Wire.beginTransmission(10);
-  Wire.write(3);
-  Wire.write(string1.length());
-  for (int i = 0; i < string1.length(); i++)
-    Wire.write(string1.charAt(i));
+  Wire.write(5);
+  Wire.write(7);
   Wire.endTransmission();
-  delay(10000);
   
+  // ld off
+  Wire.beginTransmission(10);
+  Wire.write(8);
+  Wire.endTransmission();
+  delay(1000);
+  
+  // ld on
+  Wire.beginTransmission(10);
+  Wire.write(6);
+  Wire.endTransmission();
+  delay(1000);
+  
+  // psi off
+  Wire.beginTransmission(10);
+  Wire.write(9);
+  Wire.endTransmission();
+  delay(1000);
+  
+  // psi on
+  Wire.beginTransmission(10);
+  Wire.write(7);
+  Wire.endTransmission();
+  delay(1000);
   
   
 //  wsServer.listen();

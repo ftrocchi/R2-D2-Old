@@ -78,20 +78,32 @@ void receiveEvent(int eventCode) {
     case SetLDBrightness:
       setLDBrightness();
       break;
+    case SetPSIBrightness:
+      setPSIBrightness();
+      break;
+    case LDOn:
+      ldOn();
+      break;
+    case PSIOn:
+      psiOn();
+      break;
+    case LDOff:
+      ldOff();
+      break;
+    case PSIOff:
+      psiOff();
+      break;
   }
 }
 
 void allOn() {
-  for (int device = 0; device < ledControl.getDeviceCount(); device++) {
-    for (int row = 0; row < 6; row ++) {
-      ledControl.setRow(device, row, 255);
-    }
-  }
+  ldOn();
+  psiOn();
 }
 
 void allOff() {
-  for (int device = 0; device < ledControl.getDeviceCount(); device++)
-    ledControl.clearDisplay(device);
+  ldOff();
+  psiOff();
 }
 
 void displayEnglish() {
@@ -121,6 +133,89 @@ void setLDBrightness() {
     ledControl.setIntensity(1, brightness);
   }
 }
+
+void setPSIBrightness() {
+  int brightness = Wire.read();
+
+  if (logicsI2CAdapter == CBI)
+    return;
+    
+  if (logicsI2CAdapter == RLD) {
+    ledControl.setIntensity(3, brightness);
+  } else {
+    ledControl.setIntensity(2, brightness);
+  }
+}
+
+void ldOn() {
+  if (logicsI2CAdapter == CBI)
+    return;
+    
+  if (logicsI2CAdapter == RLD) {
+    setLdOn(3);
+  } else {
+    setLdOn(2);
+  }  
+}
+
+void psiOn() {
+  if (logicsI2CAdapter == CBI)
+    return;
+
+  if (logicsI2CAdapter == RLD) {
+    setPsiOn(3);
+  } else {
+    setPsiOn(2);
+  }  
+}
+
+void ldOff() {
+  if (logicsI2CAdapter == CBI)
+    return;
+    
+  if (logicsI2CAdapter == RLD) {
+    setLdOff(3);
+  } else {
+    setLdOff(2);
+  }  
+}
+
+void psiOff() {
+  if (logicsI2CAdapter == CBI)
+    return;
+
+  if (logicsI2CAdapter == RLD) {
+    setPsiOff(3);
+  } else {
+    setPsiOff(2);
+  }  
+}
+
+
+// -------------------------------------------------------------------------------------------
+void setLdOn(int deviceMax) {
+  for (int device = 0; device < deviceMax; device++) {
+    for (int row = 0; row < 6; row ++) {
+      ledControl.setRow(device, row, 255);
+    }
+  }
+}
+
+void setPsiOn(int device) {
+  for (int row = 0; row < 6; row ++) {
+    ledControl.setRow(device, row, 255);
+  }
+}
+
+void setLdOff(int deviceMax) {
+  for (int device = 0; device < deviceMax; device++)
+    ledControl.clearDisplay(device);
+}
+
+void setPsiOff(int device) {
+  ledControl.clearDisplay(device);
+}
+
 
 void displayString(char text[]) {
   for (unsigned char i = 0; i < strlen(text); i++)
