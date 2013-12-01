@@ -43,7 +43,7 @@ void setupLogics() {
       ledControl.setIntensity(1, LDBrightness);
       ledControl.setIntensity(2, LDBrightness);
       ledControl.setIntensity(3, PSIBrightness);
-      //displayString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
+//      displayAurebeshString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
       FeedGridLeft(B00000); break;
     case FLD:
       Wire.begin(FLDAddress);
@@ -69,10 +69,11 @@ void receiveEvent(int eventCode) {
     case AllOff:
       allOff();
       break;
-    case DisplayEnglish:
-      int length = Wire.read();
-      for (int i = 0; i < length; i++) 
-        drawLetter(Wire.read());
+    case DisplayEnglish: 
+      displayEnglish();
+      break;
+    case DisplayAurebesh:
+      displayAurebesh();
       break;
   }
 }
@@ -90,12 +91,28 @@ void allOff() {
     ledControl.clearDisplay(device);
 }
 
-/*
+void displayEnglish() {
+  int length = Wire.read();
+  for (int i = 0; i < length; i++) 
+    drawLetter(Wire.read());
+}
+
+void displayAurebesh() {
+  int length = Wire.read();
+  for (int i = 0; i < length; i++) 
+    drawAurebeshLetter(Wire.read());
+}
+
 void displayString(char text[]) {
   for (unsigned char i = 0; i < strlen(text); i++)
     drawLetter(text[i]);
 }
-*/
+
+void displayAurebeshString(char text[]) {
+  for (unsigned char i = 0; i < strlen(text); i++)
+    drawAurebeshLetter(text[i]);
+}
+
 
 void drawLetter(char letter) {
   if (letter >= 'a' && letter  <= 'z')
@@ -161,6 +178,43 @@ void drawLetter(char letter) {
     case '£' : FeedGridLeft(B10001); FeedGridLeft(B11011); FeedGridLeft(B11101); FeedGridLeft(B01110); FeedGridLeft(B00000); break;
     case '$' : FeedGridLeft(B11110); FeedGridLeft(B01101); FeedGridLeft(B11111); FeedGridLeft(B01101); FeedGridLeft(B11110); FeedGridLeft(B00000); break;
     case '&' : FeedGridLeft(B00100); FeedGridLeft(B00000); FeedGridLeft(B00100); FeedGridLeft(B00000); break;    
+  }
+}
+
+void drawAurebeshLetter(char letter) {
+  if (letter >= 'a' && letter  <= 'z')
+    letter = toupper(letter);
+  
+  switch (letter) {
+    case 'A': FeedGridLeft(B11011);FeedGridLeft(B01010);FeedGridLeft(B01010);FeedGridLeft(B01010);FeedGridLeft(B10001); FeedGridLeft(B00000); break;
+    case 'B': FeedGridLeft(B01010);FeedGridLeft(B10101);FeedGridLeft(B10101);FeedGridLeft(B10101);FeedGridLeft(B01010); FeedGridLeft(B00000); break;
+    case 'C': FeedGridLeft(B00011);FeedGridLeft(B00000);FeedGridLeft(B00100);FeedGridLeft(B00000);FeedGridLeft(B11000); FeedGridLeft(B00000); break;
+    case 'D': FeedGridLeft(B10101);FeedGridLeft(B01101);FeedGridLeft(B00101);FeedGridLeft(B00011);FeedGridLeft(B00001); FeedGridLeft(B00000); break;
+    case 'E': FeedGridLeft(B00111);FeedGridLeft(B01000);FeedGridLeft(B11000);FeedGridLeft(B00111);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'F': FeedGridLeft(B11100);FeedGridLeft(B11110);FeedGridLeft(B10100);FeedGridLeft(B10010);FeedGridLeft(B10001); FeedGridLeft(B00000); break;
+    case 'G': FeedGridLeft(B11111);FeedGridLeft(B10000);FeedGridLeft(B10011);FeedGridLeft(B01001);FeedGridLeft(B00111); FeedGridLeft(B00000); break;
+    case 'H': FeedGridLeft(B10001);FeedGridLeft(B10101);FeedGridLeft(B10101);FeedGridLeft(B10101);FeedGridLeft(B10001); FeedGridLeft(B00000); break;
+    case 'I': FeedGridLeft(B00000);FeedGridLeft(B00010);FeedGridLeft(B11111);FeedGridLeft(B00000);FeedGridLeft(B00000); FeedGridLeft(B00000); break;
+    case 'J': FeedGridLeft(B10100);FeedGridLeft(B10100);FeedGridLeft(B01100);FeedGridLeft(B00110);FeedGridLeft(B00011); FeedGridLeft(B00000); break;
+    case 'K': FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'L': FeedGridLeft(B00010);FeedGridLeft(B00100);FeedGridLeft(B01000);FeedGridLeft(B10000);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'M': FeedGridLeft(B11100);FeedGridLeft(B10010);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B11011); FeedGridLeft(B00000); break;
+    case 'N': FeedGridLeft(B01110);FeedGridLeft(B11001);FeedGridLeft(B00110);FeedGridLeft(B00001);FeedGridLeft(B11110); FeedGridLeft(B00000); break;
+    case 'O': FeedGridLeft(B11100);FeedGridLeft(B10010);FeedGridLeft(B10010);FeedGridLeft(B10010);FeedGridLeft(B11100); FeedGridLeft(B00000); break;
+    case 'P': FeedGridLeft(B01110);FeedGridLeft(B10001);FeedGridLeft(B10011);FeedGridLeft(B10000);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'Q': FeedGridLeft(B11111);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B00001);FeedGridLeft(B00011); FeedGridLeft(B00000); break;
+    case 'R': FeedGridLeft(B10001);FeedGridLeft(B01001);FeedGridLeft(B00101);FeedGridLeft(B00011);FeedGridLeft(B00001); FeedGridLeft(B00000); break;
+    case 'S': FeedGridLeft(B00100);FeedGridLeft(B01010);FeedGridLeft(B10100);FeedGridLeft(B01000);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'T': FeedGridLeft(B00001);FeedGridLeft(B11111);FeedGridLeft(B00001);FeedGridLeft(B00001);FeedGridLeft(B00000); FeedGridLeft(B00000); break;
+    case 'U': FeedGridLeft(B00100);FeedGridLeft(B01000);FeedGridLeft(B11111);FeedGridLeft(B01000);FeedGridLeft(B00100); FeedGridLeft(B00000); break;
+    case 'V': FeedGridLeft(B00001);FeedGridLeft(B00010);FeedGridLeft(B11100);FeedGridLeft(B00010);FeedGridLeft(B00001); FeedGridLeft(B00000); break;
+    case 'W': FeedGridLeft(B11111);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B10001);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    case 'X': FeedGridLeft(B11100);FeedGridLeft(B10010);FeedGridLeft(B10001);FeedGridLeft(B10010);FeedGridLeft(B11100); FeedGridLeft(B00000); break;
+    case 'Y': FeedGridLeft(B00011);FeedGridLeft(B01101);FeedGridLeft(B10010);FeedGridLeft(B01100);FeedGridLeft(B00011); FeedGridLeft(B00000); break;
+    case 'Z': FeedGridLeft(B11010);FeedGridLeft(B10001);FeedGridLeft(B10011);FeedGridLeft(B10000);FeedGridLeft(B11111); FeedGridLeft(B00000); break;
+    default:
+      drawLetter(letter);
+      break;
   }
 }
 
