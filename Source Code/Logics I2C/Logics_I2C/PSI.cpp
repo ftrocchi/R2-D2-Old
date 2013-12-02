@@ -2,7 +2,8 @@
 
 const int PSI::patternAtStage[9] = { B01010101, B11010101, B10010101, B10110101, B10101010, B00101010, B01101010, B01010101, B01010101 };
 
-PSI::PSI(LedControl *led, int deviceIndex, int first, int second, int transition) {
+PSI::PSI(int address, LedControl *led, int deviceIndex, int first, int second, int transition) {
+  i2cAddress = address;
   ledControl = led;
   device = deviceIndex;
   
@@ -10,6 +11,25 @@ PSI::PSI(LedControl *led, int deviceIndex, int first, int second, int transition
 }
 
 PSI::~PSI() {
+}
+
+void PSI::ProcessCommand() {
+  I2C_PSI_Commands::Value command = (I2C_PSI_Commands::Value)Wire.read();
+  
+  switch (command) {
+    case I2C_PSI_Commands::On:
+      On();
+      break;
+      
+    case I2C_PSI_Commands::Off:
+      Off();
+      break;
+      
+    case I2C_PSI_Commands::Brightness:
+      int brightness = Wire.read();
+      SetBrightness(brightness);
+      break;
+  }
 }
 
 void PSI::On() {

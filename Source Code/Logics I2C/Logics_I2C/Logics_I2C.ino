@@ -11,11 +11,13 @@
 #include "DeviceBrightness.h"
 #include "TextDisplay.h"
 #include "WireCommands.h"
-
 #include "PSI.h"
+#include "I2C_Common.h"
+
+#define RLD
 
 // SET THESE MANUALLY
-int logicsI2CAdapter = RLD;
+int logicsI2CAdapter = RLD_;
 int deviceCount = RLDDeviceCount;
 LedControl ledControl = LedControl(2, 4, 8, deviceCount);
 unsigned char logic[RLDDeviceCount][6];
@@ -26,8 +28,9 @@ unsigned long ldLastBlink = 0;
 
 int delayTime = 30;
 
-
-PSI psi(&ledControl, 3, 1000, 2000, 200);
+#ifdef RLD
+  PSI psi(10, &ledControl, 3, 1000, 2000, 200);
+#endif
 
 
 void setup() {
@@ -56,8 +59,8 @@ void loop() {
     delay(250);
   }
   */
-  psi.Animate();
-  delay(10);
+//  psi.Animate();
+//  delay(10);
 }
 
 void setupLogics() {
@@ -67,21 +70,22 @@ void setupLogics() {
   }
 
   switch (logicsI2CAdapter) {
-    case RLD:
+    case RLD_:
       Wire.begin(RLDAddress);
       ledControl.setIntensity(0, LDBrightness);
       ledControl.setIntensity(1, LDBrightness);
       ledControl.setIntensity(2, LDBrightness);
       ledControl.setIntensity(3, PSIBrightness);
+      break;
 //      displayAurebeshString("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 - !.+?#~>_<@^£$& abcdefghijklmnopqrstuvwxyz");
 //      FeedGridLeft(B00000); break;
-    case FLD:
+    case FLD_:
       Wire.begin(FLDAddress);
       ledControl.setIntensity(0, LDBrightness);
       ledControl.setIntensity(1, LDBrightness);
       ledControl.setIntensity(2, PSIBrightness);
       FeedGridLeft(B00000); break;
-    case CBI:
+    case CBI_:
       Wire.begin(CBIAddress);
       ledControl.setIntensity(0, CBIBrightness);
       ledControl.setIntensity(1, DPBrightness);
@@ -90,7 +94,15 @@ void setupLogics() {
 }
 
 void receiveEvent(int eventCode) {
-  int command = Wire.read();
+  I2C_TargetDevice::Value targetDevice = (I2C_TargetDevice::Value)Wire.read();
+  
+#ifdef RLD
+  if (targetDevice == I2C_TargetDevice::PSI) {
+    psi.ProcessCommand();
+  }
+#endif
+
+  /*
   
   switch (command) {
     case AllOn:
@@ -127,6 +139,7 @@ void receiveEvent(int eventCode) {
       setLDBlinkAmount();
       break;
   }
+  */
 }
 
 void allOn() {
@@ -154,10 +167,10 @@ void displayAurebesh() {
 void setLDBrightness() {
   int brightness = Wire.read();
   
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
     
-  if (logicsI2CAdapter == RLD) {
+  if (logicsI2CAdapter == RLD_) {
     ledControl.setIntensity(0, brightness);
     ledControl.setIntensity(1, brightness);
     ledControl.setIntensity(2, brightness);
@@ -170,7 +183,7 @@ void setLDBrightness() {
 void setPSIBrightness() {
   int brightness = Wire.read();
 
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
 /*    
   if (logicsI2CAdapter == RLD) {
@@ -182,10 +195,10 @@ void setPSIBrightness() {
 }
 
 void ldOn() {
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
     
-  if (logicsI2CAdapter == RLD) {
+  if (logicsI2CAdapter == RLD_) {
     setLdOn(3);
   } else {
     setLdOn(2);
@@ -193,7 +206,7 @@ void ldOn() {
 }
 
 void psiOn() {
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
 
 /*
@@ -207,10 +220,10 @@ void psiOn() {
 }
 
 void ldOff() {
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
     
-  if (logicsI2CAdapter == RLD) {
+  if (logicsI2CAdapter == RLD_) {
     setLdOff(3);
   } else {
     setLdOff(2);
@@ -218,7 +231,7 @@ void ldOff() {
 }
 
 void psiOff() {
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
 
 /*
@@ -238,7 +251,7 @@ void setLDBlinkAmount() {
 
 // -------------------------------------------------------------------------------------------
 void blinkLogics() {
-  if (logicsI2CAdapter == CBI)
+  if (logicsI2CAdapter == CBI_)
     return;
     
   if (millis() - ldLastBlink > ldBlinkDelay) {
@@ -404,7 +417,7 @@ void FeedGridLeft(unsigned char newColumn) {
       vLogic[device][row][0] = temp8[row];
     }
     
-    if (logicsI2CAdapter == RLD) {
+    if (logicsI2CAdapter == RLD_) {
       vLogic[0][row][0] = temp17[row];
       vLogic[2][row][0] = (( newColumn >> row) & 1);
     }

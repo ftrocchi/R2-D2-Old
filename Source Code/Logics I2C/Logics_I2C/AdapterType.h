@@ -1,5 +1,5 @@
 typedef enum AdapterType {
-  RLD = 1,
-  FLD = 2,
-  CBI = 3
+  RLD_ = 1,
+  FLD_ = 2,
+  CBI_ = 3
 };

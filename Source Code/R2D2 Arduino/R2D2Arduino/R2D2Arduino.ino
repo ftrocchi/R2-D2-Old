@@ -3,6 +3,7 @@
 #include <MP3Trigger.h>
 #include <SendOnlySoftwareSerial.h>
 #include <Wire.h>
+#include "I2C_Common.h";
 
 #define MAX_FRAME_LENGTH 64
 
@@ -39,139 +40,48 @@ void setup() {
 }
 
 void loop() {
-  // all On
   Wire.beginTransmission(10);
-  Wire.write(0);
+  Wire.write(I2C_TargetDevice::PSI);
+  Wire.write(I2C_PSI_Commands::On);
   Wire.endTransmission();
   delay(1000);
   
-  // all off
   Wire.beginTransmission(10);
-  Wire.write(1);
+  Wire.write(I2C_TargetDevice::PSI);
+  Wire.write(I2C_PSI_Commands::Off);
   Wire.endTransmission();
   delay(1000);
   
-  // english
-  String string1 = "This is English";
   Wire.beginTransmission(10);
-  Wire.write(2);
-  Wire.write(string1.length());
-  for (int i = 0; i < string1.length(); i++)
-    Wire.write(string1.charAt(i));
+  Wire.write(I2C_TargetDevice::PSI);
+  Wire.write(I2C_PSI_Commands::On);
   Wire.endTransmission();
-  delay(3000);
   
-  // english
-  String string2 = "This is Aurebesh";
-  Wire.beginTransmission(10);
-  Wire.write(3);
-  Wire.write(string1.length());
-  for (int i = 0; i < string1.length(); i++)
-    Wire.write(string1.charAt(i));
-  Wire.endTransmission();
-  delay(3000);
-  
-  // put all on
-  Wire.beginTransmission(10);
-  Wire.write(0);
-  Wire.endTransmission();
-  delay(1000);
-  
-  // ld brightness
-  int brightness =0;
-  for (brightness = 0; brightness < 16; brightness++) {
+  int i = 0;
+  for (int i=0;i<16;i++) {
     Wire.beginTransmission(10);
-    Wire.write(4);
-    Wire.write(brightness);
+    Wire.write(I2C_TargetDevice::PSI);
+    Wire.write(I2C_PSI_Commands::Brightness);
+    Wire.write(i);
     Wire.endTransmission();
-    delay(250);
+    delay(100);
   }
   
-  for (brightness = 15; brightness >=0; brightness--) {
+  for (int i=15; i>=0; i--) {
     Wire.beginTransmission(10);
-    Wire.write(4);
-    Wire.write(brightness);
+    Wire.write(I2C_TargetDevice::PSI);
+    Wire.write(I2C_PSI_Commands::Brightness);
+    Wire.write(i);
     Wire.endTransmission();
-    delay(250);
+    delay(100);
   }
   
-  Wire.beginTransmission(10);
-  Wire.write(4);
-  Wire.write(7);
-  Wire.endTransmission();
-
-  // psi bright ness  
-  for (brightness = 0; brightness < 16; brightness++) {
     Wire.beginTransmission(10);
-    Wire.write(5);
-    Wire.write(brightness);
+    Wire.write(I2C_TargetDevice::PSI);
+    Wire.write(I2C_PSI_Commands::Brightness);
+    Wire.write(7);
     Wire.endTransmission();
-    delay(250);
-  }
   
-  for (brightness = 15; brightness >=0; brightness--) {
-    Wire.beginTransmission(10);
-    Wire.write(5);
-    Wire.write(brightness);
-    Wire.endTransmission();
-    delay(250);
-  }
-  
-  Wire.beginTransmission(10);
-  Wire.write(5);
-  Wire.write(7);
-  Wire.endTransmission();
-  
-  // ld off
-  Wire.beginTransmission(10);
-  Wire.write(8);
-  Wire.endTransmission();
-  delay(1000);
-  
-  // ld on
-  Wire.beginTransmission(10);
-  Wire.write(6);
-  Wire.endTransmission();
-  delay(1000);
-  
-  // psi off
-  Wire.beginTransmission(10);
-  Wire.write(9);
-  Wire.endTransmission();
-  delay(1000);
-  
-  // psi on
-  Wire.beginTransmission(10);
-  Wire.write(7);
-  Wire.endTransmission();
-  delay(1000);
-  
-  
-//  wsServer.listen();
-  
-//  processPS2();
-/*
-  Wire.beginTransmission(128);
-  Wire.write(0);
-  Wire.write(0);
-  Wire.write(1);
-  Wire.endTransmission();
-  delay(5000);
-  
-  Wire.beginTransmission(128);
-  Wire.write(1);
-  Wire.write(0);
-  Wire.write(2);
-  Wire.endTransmission();
-  delay(5000);
-
-  Wire.beginTransmission(128);
-  Wire.write(2);
-  Wire.write(0);
-  Wire.write(3);
-  Wire.endTransmission();
-  delay(5000);
-  */
 }
 
 // ----------------------------------------------------------

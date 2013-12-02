@@ -7,12 +7,15 @@
   #include "WProgram.h"
 #endif
 
+#include <Wire.h>
 #include <LedControl.h>
+#include "I2C_Common.h"
 
 class PSI {
   private:
     static const int patternAtStage[9];
     LedControl *ledControl;
+    int i2cAddress;
     int device;
     int delayAtStage[9];
     int stage;
@@ -23,8 +26,10 @@ class PSI {
     void ResetDelays(int first, int second, int transition);
   
   public:
-    PSI(LedControl *led, int deviceIndex, int first, int second, int transition);
+    PSI(int i2cAddress, LedControl *led, int deviceIndex, int first, int second, int transition);
     ~PSI();
+    
+    void ProcessCommand();
   
     void On();
     void Off();
